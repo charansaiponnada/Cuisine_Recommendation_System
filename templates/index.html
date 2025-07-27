@@ -262,6 +262,11 @@ function displayRecommendations(recommendations, method) {
             <div class="absolute top-0 right-0 bg-white bg-opacity-20 px-3 py-1 rounded-bl-lg">
                 <span class="text-sm font-semibold">Score: ${cuisine.score}</span>
             </div>
+            <div class="mb-4">
+                <img src="${cuisine.image_path}" alt="${cuisine.name} cuisine" 
+                     class="w-full h-32 object-cover rounded-lg shadow-md"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCIgZmlsbD0iIzk5OTk5OSI+JHtjdWlzaW5lLm5hbWV9PC90ZXh0Pjwvc3ZnPg=='">
+            </div>
             <h4 class="text-2xl font-bold mb-2">${cuisine.name}</h4>
             <p class="text-gray-200 mb-3 flex items-center">
                 <i class="fas fa-map-marker-alt mr-2"></i>${cuisine.region} Cuisine

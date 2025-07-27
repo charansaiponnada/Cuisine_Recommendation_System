@@ -39,34 +39,34 @@ class CuisineRecommender:
         cuisines_data = [
             {"cuisine_id": 1, "name": "Italian", "description": "pasta pizza risotto cheese tomato basil olive_oil", 
              "spice_level": 2, "prep_time": 45, "difficulty": 3, "dietary_tags": "vegetarian_friendly gluten_options", 
-             "region": "European", "price_range": 3, "popularity": 9.2},
+             "region": "European", "price_range": 3, "popularity": 9.2, "image_path": "static/images/italian.jpg"},
             {"cuisine_id": 2, "name": "Thai", "description": "spicy coconut curry lemongrass chili lime fish_sauce", 
              "spice_level": 8, "prep_time": 35, "difficulty": 4, "dietary_tags": "gluten_free spicy", 
-             "region": "Asian", "price_range": 2, "popularity": 8.7},
+             "region": "Asian", "price_range": 2, "popularity": 8.7, "image_path": "static/images/thai.jpg"},
             {"cuisine_id": 3, "name": "Mexican", "description": "spicy beans corn avocado lime cilantro chili pepper", 
              "spice_level": 6, "prep_time": 30, "difficulty": 3, "dietary_tags": "vegetarian_options spicy", 
-             "region": "Latin_American", "price_range": 2, "popularity": 8.9},
+             "region": "Latin_American", "price_range": 2, "popularity": 8.9, "image_path": "static/images/mexican.jpg"},
             {"cuisine_id": 4, "name": "Japanese", "description": "sushi rice soy_sauce wasabi ginger fresh clean", 
              "spice_level": 1, "prep_time": 60, "difficulty": 5, "dietary_tags": "gluten_free pescatarian", 
-             "region": "Asian", "price_range": 4, "popularity": 9.1},
+             "region": "Asian", "price_range": 4, "popularity": 9.1, "image_path": "static/images/japanese.jpg"},
             {"cuisine_id": 5, "name": "Indian", "description": "spicy curry turmeric garam_masala rice naan yogurt", 
              "spice_level": 9, "prep_time": 55, "difficulty": 4, "dietary_tags": "vegetarian_options very_spicy", 
-             "region": "Asian", "price_range": 2, "popularity": 8.5},
+             "region": "Asian", "price_range": 2, "popularity": 8.5, "image_path": "static/images/indian.jpg"},
             {"cuisine_id": 6, "name": "French", "description": "butter wine cheese cream sauce elegant refined", 
              "spice_level": 2, "prep_time": 75, "difficulty": 5, "dietary_tags": "dairy_heavy sophisticated", 
-             "region": "European", "price_range": 5, "popularity": 8.3},
+             "region": "European", "price_range": 5, "popularity": 8.3, "image_path": "static/images/french.jpg"},
             {"cuisine_id": 7, "name": "Chinese", "description": "soy_sauce ginger garlic stir_fry rice noodles wok", 
              "spice_level": 4, "prep_time": 25, "difficulty": 3, "dietary_tags": "quick_cooking vegetarian_options", 
-             "region": "Asian", "price_range": 2, "popularity": 9.0},
+             "region": "Asian", "price_range": 2, "popularity": 9.0, "image_path": "static/images/chinese.jpg"},
             {"cuisine_id": 8, "name": "Korean", "description": "kimchi spicy fermented sesame gochujang bbq rice", 
              "spice_level": 7, "prep_time": 40, "difficulty": 4, "dietary_tags": "fermented spicy", 
-             "region": "Asian", "price_range": 3, "popularity": 8.6},
+             "region": "Asian", "price_range": 3, "popularity": 8.6, "image_path": "static/images/korean.jpg"},
             {"cuisine_id": 9, "name": "Mediterranean", "description": "olive_oil feta olives herbs fresh vegetables healthy", 
              "spice_level": 3, "prep_time": 35, "difficulty": 2, "dietary_tags": "healthy vegetarian_friendly", 
-             "region": "European", "price_range": 3, "popularity": 8.8},
+             "region": "European", "price_range": 3, "popularity": 8.8, "image_path": "static/images/mediterranean.jpg"},
             {"cuisine_id": 10, "name": "American", "description": "burger fries bbq comfort_food cheese bacon hearty", 
              "spice_level": 3, "prep_time": 30, "difficulty": 2, "dietary_tags": "comfort_food hearty", 
-             "region": "North_American", "price_range": 3, "popularity": 8.2}
+             "region": "North_American", "price_range": 3, "popularity": 8.2, "image_path": "static/images/american.jpg"}
         ]
         
         self.cuisines_df = pd.DataFrame(cuisines_data)
@@ -405,6 +405,7 @@ def get_recommendations(user_id):
                     'difficulty': int(cuisine['difficulty']),
                     'price_range': int(cuisine['price_range']),
                     'region': cuisine['region'],
+                    'image_path': cuisine['image_path'],
                     'score': round(float(score), 2)
                 })
             except Exception as e:
@@ -440,6 +441,7 @@ def get_mood_recommendations():
                     'difficulty': int(cuisine['difficulty']),
                     'price_range': int(cuisine['price_range']),
                     'region': cuisine['region'],
+                    'image_path': cuisine['image_path'],
                     'score': round(float(score), 2)
                 })
             except Exception as e:

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-12">
+    <h2 class="text-4xl font-bold text-gray-800 mb-4">Discover Your Next Favorite Cuisine</h2>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Get personalized cuisine recommendations based on your taste preferences and cooking style
+    </p>
+</div>
+
+<!-- User Selection -->
+<div class="bg-white rounded-lg shadow-lg p-6 mb-8 border-t-4 border-purple-500">
+    <h3 class="text-2xl font-semibold mb-4 text-center text-gray-800">
+        <i class="fas fa-user-circle text-purple-500 mr-2"></i> Choose Your User Profile
+    </h3>
+    <div class="flex justify-center items-center mb-4 space-x-2">
+        <input type="number" id="userIdInput" placeholder="Enter User ID (1-100)" 
+               class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+               min="1" max="100" value="1">
+        <button onclick="loadUserProfile()" 
+                class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all transform hover:scale-105 shadow-md">
+            <i class="fas fa-search mr-1"></i> Load Profile
+        </button>
+    </div>
+    <div id="userProfile" class="text-center text-gray-600 mt-4"></div>
+</div>
+
+<!-- Mood-Based Recommendations -->
+<div class="bg-white rounded-lg shadow-lg p-6 mb-8 border-t-4 border-red-500">
+    <h3 class="text-2xl font-semibold mb-6 text-center text-gray-800">
+        <i class="fas fa-heart text-red-500 mr-2"></i> What's Your Mood Today?
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <button onclick="getMoodRecommendations('adventurous')" 
+                class="mood-btn text-white px-4 py-3 rounded-lg font-semibold shadow-lg">
+            <i class="fas fa-mountain mr-2"></i> Adventurous
+        </button>
+        <button onclick="getMoodRecommendations('comfort')" 
+                class="mood-btn text-white px-4 py-3 rounded-lg font-semibold shadow-lg">
+            <i class="fas fa-home mr-2"></i> Comfort Food
+        </button>
+        <button onclick="getMoodRecommendations('spicy')" 
+                class="mood-btn text-white px-4 py-3 rounded-lg font-semibold shadow-lg">
+            <i class="fas fa-fire mr-2"></i> Spicy
+        </button>
+        <button onclick="getMoodRecommendations('healthy')" 
+                class="mood-btn text-white px-4 py-3 rounded-lg font-semibold shadow-lg">
+            <i class="fas fa-leaf mr-2"></i> Healthy
+        </button>
+    </div>
+</div>
+
+<!-- Recommendation Methods -->
+<div class="bg-white rounded-lg shadow-lg p-6 mb-8 border-t-4 border-blue-500">
+    <h3 class="text-2xl font-semibold mb-6 text-center text-gray-800">
+        <i class="fas fa-robot text-blue-500 mr-2"></i> Choose Recommendation Method
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button onclick="getRecommendations('hybrid')" 
+                class="method-btn px-4 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all shadow-lg">
+            <i class="fas fa-magic mr-2"></i> Hybrid (Best)
+        </button>
+        <button onclick="getRecommendations('collaborative')" 
+                class="method-btn px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all shadow-lg">
+            <i class="fas fa-users mr-2"></i> Collaborative
+        </button>
+        <button onclick="getRecommendations('content')" 
+                class="method-btn px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all shadow-lg">
+            <i class="fas fa-list mr-2"></i> Content-Based
+        </button>
+        <button onclick="getRecommendations('popular')" 
+                class="method-btn px-4 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all shadow-lg">
+            <i class="fas fa-star mr-2"></i> Popular
+        </button>
+    </div>
+</div>
+
+<!-- Recommendations Display -->
+<div id="recommendationsContainer" class="hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500">
+        <h3 class="text-2xl font-semibold mb-6 text-center text-gray-800">
+            <i class="fas fa-thumbs-up text-green-500 mr-2"></i> Your Recommendations
+        </h3>
+        <div id="recommendationsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Recommendations will be populated here -->
+        </div>
+    </div>
+</div>
+
+<!-- Rating Modal -->
+<div id="ratingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Rate This Cuisine</h3>
+        <div id="ratingCuisineName" class="text-lg mb-4 text-purple-600 font-medium"></div>
+        <div class="flex justify-center mb-6">
+            <div class="flex space-x-2">
+                <i class="fas fa-star rating-star text-3xl text-gray-300" data-rating="1"></i>
+                <i class="fas fa-star rating-star text-3xl text-gray-300" data-rating="2"></i>
+                <i class="fas fa-star rating-star text-3xl text-gray-300" data-rating="3"></i>
+                <i class="fas fa-star rating-star text-3xl text-gray-300" data-rating="4"></i>
+                <i class="fas fa-star rating-star text-3xl text-gray-300" data-rating="5"></i>
+            </div>
+        </div>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeRatingModal()" 
+                    class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
+                Cancel
+            </button>
+            <button onclick="submitRating()" 
+                    class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
+                Submit Rating
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentUser = 1;
+let currentRatingCuisine = null;
+let selectedRating = 0;
+
+function loadUserProfile() {
+    currentUser = document.getElementById('userIdInput').value;
+    
+    // Show loading state
+    document.getElementById('userProfile').innerHTML = 
+        '<div class="text-center"><i class="fas fa-spinner fa-spin text-purple-500"></i> Loading profile...</div>';
+    
+    fetch(`/api/user/${currentUser}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('userProfile').innerHTML = 
+                    `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>User not found. Please enter a valid user ID (1-100).
+                    </div>`;
+            } else {
+                document.getElementById('userProfile').innerHTML = `
+                    <div class="bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg p-6 max-w-2xl mx-auto">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                            <div class="text-center">
+                                <div class="text-purple-600 font-semibold">Age Group</div>
+                                <div class="text-gray-700">${data.age_group}</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-purple-600 font-semibold">Diet</div>
+                                <div class="text-gray-700">${data.dietary_preference}</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-purple-600 font-semibold">Spice Tolerance</div>
+                                <div class="text-gray-700">${data.spice_tolerance}/10</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-purple-600 font-semibold">Budget</div>
+                                <div class="text-gray-700">${'$'.repeat(data.budget_preference)}</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-purple-600 font-semibold">Adventurous</div>
+                                <div class="text-gray-700">${data.adventurous_score}/10</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-purple-600 font-semibold">Total Ratings</div>
+                                <div class="text-gray-700">${data.total_ratings}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading user profile:', error);
+            document.getElementById('userProfile').innerHTML = 
+                '<div class="text-red-500">Error loading profile. Please try again.</div>';
+        });
+}
+
+function getRecommendations(method) {
+    // Show loading state
+    showLoadingState();
+    
+    fetch(`/api/recommend/${currentUser}?method=${method}`)
+        .then(response => response.json())
+        .then(data => {
+            displayRecommendations(data, method);
+        })
+        .catch(error => {
+            console.error('Error getting recommendations:', error);
+            showErrorState();
+        });
+}
+
+function getMoodRecommendations(mood) {
+    // Show loading state
+    showLoadingState();
+    
+    fetch(`/api/mood_recommend?mood=${mood}`)
+        .then(response => response.json())
+        .then(data => {
+            displayRecommendations(data, `${mood} mood`);
+        })
+        .catch(error => {
+            console.error('Error getting mood recommendations:', error);
+            showErrorState();
+        });
+}
+
+function showLoadingState() {
+    const container = document.getElementById('recommendationsContainer');
+    const list = document.getElementById('recommendationsList');
+    
+    container.classList.remove('hidden');
+    list.innerHTML = `
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-purple-500 mb-4"></i>
+            <p class="text-gray-600 text-lg">Finding perfect cuisines for you...</p>
+        </div>
+    `;
+}
+
+function showErrorState() {
+    const list = document.getElementById('recommendationsList');
+    list.innerHTML = `
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+            <p class="text-gray-600 text-lg">Sorry, we couldn't load recommendations. Please try again.</p>
+        </div>
+    `;
+}
+
+function displayRecommendations(recommendations, method) {
+    const container = document.getElementById('recommendationsContainer');
+    const list = document.getElementById('recommendationsList');
+    
+    container.classList.remove('hidden');
+    
+    // Clear previous content
+    list.innerHTML = '';
+    
+    // Add method info header
+    const methodInfo = document.createElement('div');
+    methodInfo.className = 'col-span-full text-center mb-6';
+    methodInfo.innerHTML = `
+        <div class="bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg p-4">
+            <p class="text-lg font-semibold text-gray-800">
+                <i class="fas fa-magic text-purple-500 mr-2"></i>
+                Recommendations using: <span class="text-purple-600">${method.charAt(0).toUpperCase() + method.slice(1)}</span>
+            </p>
+        </div>
+    `;
+    list.appendChild(methodInfo);
+    
+    // Add recommendation cards
+    recommendations.forEach(cuisine => {
+        const card = document.createElement('div');
+        card.className = 'cuisine-card rounded-lg p-6 text-white relative overflow-hidden shadow-lg';
+        
+        const spiceStars = '🌶️'.repeat(Math.min(cuisine.spice_level, 5));
+        const difficultyStars = '⭐'.repeat(Math.min(cuisine.difficulty, 5));
+        const priceSymbols = '$'.repeat(Math.min(cuisine.price_range, 5));
+        
+        card.innerHTML = `
+            <div class="absolute top-0 right-0 bg-white bg-opacity-20 px-3 py-1 rounded-bl-lg">
+                <span class="text-sm font-semibold">Score: ${cuisine.score}</span>
+            </div>
+            <h4 class="text-2xl font-bold mb-2">${cuisine.name}</h4>
+            <p class="text-gray-200 mb-3 flex items-center">
+                <i class="fas fa-map-marker-alt mr-2"></i>${cuisine.region} Cuisine
+            </p>
+            <div class="space-y-2 mb-4">
+                <p class="flex items-center"><i class="fas fa-fire text-red-300 mr-2"></i> Spice: ${spiceStars}</p>
+                <p class="flex items-center"><i class="fas fa-clock text-blue-300 mr-2"></i> Prep: ${cuisine.prep_time} min</p>
+                <p class="flex items-center"><i class="fas fa-star text-yellow-300 mr-2"></i> Difficulty: ${difficultyStars}</p>
+                <p class="flex items-center"><i class="fas fa-dollar-sign text-green-300 mr-2"></i> Price: ${priceSymbols}</p>
+            </div>
+            <button onclick="openRatingModal(${cuisine.cuisine_id}, '${cuisine.name}')" 
+                    class="w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-2 px-4 rounded transition-all transform hover:scale-105">
+                <i class="fas fa-heart mr-2"></i> Rate This Cuisine
+            </button>
+        `;
+        
+        list.appendChild(card);
+    });
+}
+
+function openRatingModal(cuisineId, cuisineName) {
+    currentRatingCuisine = cuisineId;
+    document.getElementById('ratingCuisineName').textContent = cuisineName;
+    document.getElementById('ratingModal').classList.remove('hidden');
+    selectedRating = 0;
+    updateStarDisplay();
+}
+
+function closeRatingModal() {
+    document.getElementById('ratingModal').classList.add('hidden');
+    currentRatingCuisine = null;
+    selectedRating = 0;
+}
+
+function updateStarDisplay() {
+    const stars = document.querySelectorAll('.rating-star');
+    stars.forEach((star, index) => {
+        if (index < selectedRating) {
+            star.classList.remove('text-gray-300');
+            star.classList.add('text-yellow-400');
+        } else {
+            star.classList.remove('text-yellow-400');
+            star.classList.add('text-gray-300');
+        }
+    });
+}
+
+function submitRating() {
+    if (selectedRating === 0) {
+        alert('Please select a rating!');
+        return;
+    }
+    
+    fetch('/api/rate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            user_id: parseInt(currentUser),
+            cuisine_id: currentRatingCuisine,
+            rating: selectedRating
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Rating submitted successfully! 🎉');
+            closeRatingModal();
+        } else {
+            alert('Error submitting rating');
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting rating:', error);
+        alert('Error submitting rating');
+    });
+}
+
+// Event listeners for rating stars
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating-star');
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            selectedRating = parseInt(this.dataset.rating);
+            updateStarDisplay();
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.dataset.rating);
+            stars.forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.remove('text-gray-300');
+                    s.classList.add('text-yellow-400');
+                } else {
+                    s.classList.remove('text-yellow-400');
+                    s.classList.add('text-gray-300');
+                }
+            });
+        });
+        
+        star.addEventListener('mouseleave', function() {
+            updateStarDisplay();
+        });
+    });
+    
+    // Load initial user profile
+    loadUserProfile();
+});
+</script>
+{% endblock %}

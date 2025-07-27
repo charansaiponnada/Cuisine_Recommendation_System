@@ -1,0 +1,11 @@
+cuisine_id,name,description,spice_level,prep_time,difficulty,dietary_tags,region,price_range,popularity
+1,Italian,pasta pizza risotto cheese tomato basil olive_oil,2,45,3,vegetarian_friendly gluten_options,European,3,9.2
+2,Thai,spicy coconut curry lemongrass chili lime fish_sauce,8,35,4,gluten_free spicy,Asian,2,8.7
+3,Mexican,spicy beans corn avocado lime cilantro chili pepper,6,30,3,vegetarian_options spicy,Latin_American,2,8.9
+4,Japanese,sushi rice soy_sauce wasabi ginger fresh clean,1,60,5,gluten_free pescatarian,Asian,4,9.1
+5,Indian,spicy curry turmeric garam_masala rice naan yogurt,9,55,4,vegetarian_options very_spicy,Asian,2,8.5
+6,French,butter wine cheese cream sauce elegant refined,2,75,5,dairy_heavy sophisticated,European,5,8.3
+7,Chinese,soy_sauce ginger garlic stir_fry rice noodles wok,4,25,3,quick_cooking vegetarian_options,Asian,2,9.0
+8,Korean,kimchi spicy fermented sesame gochujang bbq rice,7,40,4,fermented spicy,Asian,3,8.6
+9,Mediterranean,olive_oil feta olives herbs fresh vegetables healthy,3,35,2,healthy vegetarian_friendly,European,3,8.8
+10,American,burger fries bbq comfort_food cheese bacon hearty,3,30,2,comfort_food hearty,North_American,3,8.2

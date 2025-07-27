@@ -1,0 +1,81 @@
+<!-- templates/base.html - Updated version with proper CDN links -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cuisine Recommender{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        .cuisine-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .cuisine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .mood-btn {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            transition: all 0.3s ease;
+        }
+        .mood-btn:hover {
+            background: linear-gradient(45deg, #feca57, #ff6b6b);
+            transform: scale(1.05);
+        }
+        .rating-star {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .rating-star:hover {
+            color: #fbbf24;
+        }
+        .filled-star {
+            color: #fbbf24;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .method-btn {
+            transition: all 0.3s ease;
+        }
+        .method-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-utensils text-white text-2xl"></i>
+                    <h1 class="text-white text-2xl font-bold">Cuisine Recommender</h1>
+                </div>
+                <div class="space-x-4">
+                    <a href="/" class="text-white hover:text-gray-200 transition-colors">Home</a>
+                    <a href="/dashboard" class="text-white hover:text-gray-200 transition-colors">Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="gradient-bg text-white text-center py-4 mt-12">
+        <p>&copy; 2024 Cuisine Recommender System - Built with Flask & Machine Learning</p>
+    </footer>
+</body>
+</html>

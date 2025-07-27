@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Cuisine Recommender{% endblock %}
+
+{% block content %}
+<div class="text-center mb-12">
+    <h2 class="text-4xl font-bold text-gray-800 mb-4">
+        <i class="fas fa-chart-line text-blue-500"></i> Analytics Dashboard
+    </h2>
+    <p class="text-xl text-gray-600">
+        Insights into the recommendation system performance and user behavior
+    </p>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl text-blue-500 mb-2">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">{{ stats.total_users }}</h3>
+        <p class="text-gray-600">Total Users</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl text-green-500 mb-2">
+            <i class="fas fa-utensils"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">{{ stats.total_cuisines }}</h3>
+        <p class="text-gray-600">Available Cuisines</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl text-purple-500 mb-2">
+            <i class="fas fa-star"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">{{ stats.total_ratings }}</h3>
+        <p class="text-gray-600">Total Ratings</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="text-3xl text-yellow-500 mb-2">
+            <i class="fas fa-heart"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">{{ stats.avg_rating }}</h3>
+        <p class="text-gray-600">Average Rating</p>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Rating Distribution Chart -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold mb-4">
+            <i class="fas fa-chart-bar text-blue-500"></i> Rating Distribution
+        </h3>
+        <canvas id="ratingChart"></canvas>
+    </div>
+    
+    <!-- Cuisine Popularity Chart -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold mb-4">
+            <i class="fas fa-chart-pie text-green-500"></i> Cuisine Popularity
+        </h3>
+        <canvas id="cuisineChart"></canvas>
+    </div>
+</div>
+
+<!-- System Performance -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h3 class="text-xl font-semibold mb-4">
+        <i class="fas fa-cogs text-purple-500"></i> System Performance Metrics
+    </h3>
+    <div id="performanceMetrics" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Performance metrics will be loaded here -->
+    </div>
+</div>
+
+<!-- Live Statistics -->
+<div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-xl font-semibold mb-4">
+        <i class="fas fa-pulse text-red-500"></i> Live System Statistics
+    </h3>
+    <div id="liveStats" class="text-center text-gray-600">
+        <p>Loading live statistics...</p>
+    </div>
+    <button onclick="refreshStats()" 
+            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+        <i class="fas fa-refresh"></i> Refresh Stats
+    </button>
+</div>
+
+<script>
+let ratingChart, cuisineChart;
+
+function initializeCharts() {
+    // Rating Distribution Chart
+    const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+    ratingChart = new Chart(ratingCtx, {
+        type: 'bar',
+        data: {
+            labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+            datasets: [{
+                label: 'Number of Ratings',
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: [
+                    '#ef4444',
+                    '#f97316',
+                    '#eab308',
+                    '#22c55e',
+                    '#10b981'
+                ],
+                borderColor: [
+                    '#dc2626',
+                    '#ea580c',
+                    '#ca8a04',
+                    '#16a34a',
+                    '#059669'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Cuisine Popularity Chart
+    const cuisineCtx = document.getElementById('cuisineChart').getContext('2d');
+    cuisineChart = new Chart(cuisineCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [
+                    '#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981',
+                    '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function loadDashboardData() {
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            updateCharts(data);
+            updateLiveStats(data);
+        })
+        .catch(error => {
+            console.error('Error loading dashboard data:', error);
+        });
+}
+
+function updateCharts(data) {
+    // Update rating distribution chart
+    const ratingDist = data.rating_distribution;
+    const ratingData = [
+        ratingDist['1.0'] || 0,
+        ratingDist['2.0'] || 0,
+        ratingDist['3.0'] || 0,
+        ratingDist['4.0'] || 0,
+        ratingDist['5.0'] || 0
+    ];
+    ratingChart.data.datasets[0].data = ratingData;
+    ratingChart.update();
+    
+    // Load cuisine data for popularity chart
+    fetch('/api/cuisines')
+        .then(response => response.json())
+        .then(cuisines => {
+            const cuisineNames = cuisines.map(c => c.name);
+            const cuisinePopularity = cuisines.map(c => c.popularity);
+            
+            cuisineChart.data.labels = cuisineNames;
+            cuisineChart.data.datasets[0].data = cuisinePopularity;
+            cuisineChart.update();
+        });
+}
+
+function updateLiveStats(data) {
+    document.getElementById('liveStats').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="text-center">
+                <p class="text-2xl font-bold text-blue-500">${data.most_popular_cuisine}</p>
+                <p class="text-sm text-gray-600">Most Popular Cuisine</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-red-500">${data.spiciest_cuisine}</p>
+                <p class="text-sm text-gray-600">Spiciest Cuisine</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-green-500">${data.avg_rating}</p>
+                <p class="text-sm text-gray-600">System Average Rating</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-purple-500">${((data.total_ratings / data.total_users) || 0).toFixed(1)}</p>
+                <p class="text-sm text-gray-600">Avg Ratings per User</p>
+            </div>
+        </div>
+    `;
+}
+
+function refreshStats() {
+    loadDashboardData();
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    loadDashboardData();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadDashboardData, 30000);
+});
+</script>
+{% endblock %}

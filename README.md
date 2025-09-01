@@ -1,3 +1,8 @@
+> This is **Second project in my intenship as Data Associate L1 in DataScience and ML Domain **.
+> This project was developed during my 2nd month in my 3-month internship at Infotact Solutions as a Data Science and Machine Learning Intern.
+> It was my first end-to-end AI project, where I applied NLP and ML techniques to build a fully functional Cuisine Recommendation System.
+
+
 # requirements.txt
 Flask==2.3.3
 pandas==2.0.3
